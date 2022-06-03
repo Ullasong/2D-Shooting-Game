@@ -1,30 +1,34 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-// 2. 캐릭터 회전시키기
-// 캐릭터가 앞을 보고 있는 상태에서 <- 키를 한번 누르면 90도 회전을 한다.
 
-public class PlayerMove_14 : MonoBehaviour
+// 순서1) 방향키로 사용자 입력을 받아서 플레이어를 앞뒤좌우로 이동시키자
+public class PlayerMove : MonoBehaviour
 {
-    public float movespeed = 3;
-    private Transform transform;
-    // 1. 캐릭터 이동시키기
-    // 모든 게임오브젝트가 가지고 있는 Transfrom의 Poision 값을 변경하는 방식으로 캐릭터를 이동시키기
-
-    void Start()
+    private float speed = 5f;
+    private Transform tr;
+    private GameObject target;
+    public int score = 0;
+    
+    void Start() 
     {
-        transform = GetComponent<Transform>();
-        // 2. 컴포넌트의 캐시처리
-        // 매프래임마다 컴포넌트에 접근하는 것보다 Start함수에서 미리 변수에 담아두고 해당 변수에 접근하는 방식이 더 빠르다.
+        tr = GetComponent<Transform>(); 
     }
 
-    void Update()
+    void Update() 
     {
-        float horizontal = Input.GetAxis("Horizontal");
+        float h = Input.GetAxis("Horizontal");
+        float v = Input.GetAxis("Vertical");
+        
+        Vector3 dir = ((Vector3.forward * v) + (Vector3.right * h));
 
-        Vector3 direction = horizontal * Vector3.right;
-        Debug.Log(direction);
+        tr.Translate(dir.normalized * speed * Time.deltaTime); 
 
-        transform.Translate(direction.normalized * movespeed * Time.deltaTime);
+        //만약 Shift키를 누르는 동안에만, speed가 2배가 된다.
+        if (Input.GetKey(KeyCode.LeftShift)) tr.Translate(dir.normalized * (speed * 2 ) * Time.deltaTime);  
     }
+
+    public void AddScore(int point) {
+        score += point;
+    }  
 }
